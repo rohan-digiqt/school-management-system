@@ -487,10 +487,10 @@ class ClassroomAPI(APIView):
                 'data' : {}
             })
         print(data.get('id'))
-
+  
         is_exist = Classroom.objects.filter(id=data.get('id')).exists()
         print(is_exist)
-
+    
         if is_exist:
             obj = Classroom.objects.get(id = data.get('id'))
             serializer = ClassroomSerializer(obj,  data=data, partial=True)
