@@ -1,4 +1,6 @@
 
+from functools import partial
+import this
 from django.shortcuts import render
 from rest_framework.decorators import api_view,APIView
 from rest_framework.response import Response
@@ -17,7 +19,7 @@ from .models import *
 
 #     return Response({
 #         'status': True,
-#         'msg': 'Department Data Fatched',
+#         'message': 'Department Data Fatched',
 #         'data': serializer.data
 #     }) 
 
@@ -33,21 +35,21 @@ from .models import *
 #             print(serializer.data)
 #             return Response({
 #                 'status':True,
-#                 'msg' : "Add Department Successful ",
+#                 'message' : "Add Department Successful ",
 #                 'data':serializer.data
 #             })
 
 #         print(data)
 #         return Response({
 #             'status':False,
-#             'msg' : "Fields Invalid Data ",
+#             'message' : "Fields Invalid Data ",
 #             'data':serializer.errors
 #         })
 #     except Exception as e:
 #         print(e)
 #     return Response({
 #         'status': False,
-#         'msg' : "Something Went Wrong",
+#         'message' : "Something Went Wrong",
 #     })
 
 # @api_view(['POST'])
@@ -60,21 +62,21 @@ from .models import *
 #             print(serializer.data)
 #             return Response({
 #                 'status':True,
-#                 'msg' : "Add Department Choice Successful ",
+#                 'message' : "Add Department Choice Successful ",
 #                 'data':serializer.data
 #             })
 
 #         print(data)
 #         return Response({
 #             'status':False,
-#             'msg' : "Fields Invalid Data ",
+#             'message' : "Fields Invalid Data ",
 #             'data':serializer.errors
 #         })
 #     except Exception as e:
 #         print(e)
 #     return Response({
 #         'status': False,
-#         'msg' : "Something Went Wrong",
+#         'message' : "Something Went Wrong",
 #     })
 
 # @api_view(['PATCH'])
@@ -86,7 +88,7 @@ from .models import *
 #         if not data.get('department_id'):
 #             return Response({
 #                 'status': False,
-#                 'msg':'ID is required',
+#                 'message':'ID is required',
 #                 'data' : {}
 #             })
 #         obj = Department.objects.get(department_id = data.get('department_id'))
@@ -95,19 +97,19 @@ from .models import *
 #             serializer.save()
 #             return Response({
 #                 'status':True,
-#                 'msg' : "Success Data ",
+#                 'message' : "Success Data ",
 #                 'data':serializer.data
 #             })
 #         return Response({
 #             'status':False,
-#             'msg' : "Fields Invalid Data ",
+#             'message' : "Fields Invalid Data ",
 #             'data':serializer.errors
 #         })
 #     except Exception as e:
 #         print(e)
 #     return Response({
 #         'status': False,
-#         'msg' : "Invalid ID",
+#         'message' : "Invalid ID",
 #         'data':{}
 #     })
 
@@ -121,7 +123,7 @@ from .models import *
 
 #     return Response({
 #         'status': True,
-#         'msg': 'Students Data Fatched',
+#         'message': 'Students Data Fatched',
 #         'data': serializer.data
 #     }) 
 
@@ -135,21 +137,21 @@ from .models import *
 #             print(serializer.data)
 #             return Response({
 #                 'status':True,
-#                 'msg' : "Add Student Successful ",
+#                 'message' : "Add Student Successful ",
 #                 'data':serializer.data
 #             })
 
 #         print(data)
 #         return Response({
 #             'status':False,
-#             'msg' : "Fields Invalid Data ",
+#             'message' : "Fields Invalid Data ",
 #             'data':serializer.errors
 #         })
 #     except Exception as e:
 #         print(e)
 #     return Response({
 #         'status': False,
-#         'msg' : "Something Went Wrong",
+#         'message' : "Something Went Wrong",
 #     })
 
 # @api_view(['PATCH'])
@@ -161,7 +163,7 @@ from .models import *
 #         if not data.get('student_id'):
 #             return Response({
 #                 'status': False,
-#                 'msg':'ID is required',
+#                 'message':'ID is required',
 #                 'data' : {}
 #             })
 #         obj = Student.objects.get(student_id = data.get('student_id'))
@@ -170,19 +172,19 @@ from .models import *
 #             serializer.save()
 #             return Response({
 #                 'status':True,
-#                 'msg' : "Success Data ",
+#                 'message' : "Success Data ",
 #                 'data':serializer.data
 #             })
 #         return Response({
 #             'status':False,
-#             'msg' : "Fields Invalid Data ",
+#             'message' : "Fields Invalid Data ",
 #             'data':serializer.errors
 #         })
 #     except Exception as e:
 #         print(e)
 #     return Response({
 #         'status': False,
-#         'msg' : "Invalid ID",
+#         'message' : "Invalid ID",
 #         'data':{}
 #     })
 
@@ -195,7 +197,7 @@ from .models import *
 #         if not data.get('student_id'):
 #             return Response({
 #                 'status': False,
-#                 'msg':'ID is required',
+#                 'message':'ID is required',
 #                 'data' : {}
 #             })
 #         obj = Student.objects.get(student_id = data.get('student_id'))
@@ -204,33 +206,34 @@ from .models import *
 #             serializer.delete()
 #             return Response({
 #                 'status':True,
-#                 'msg' : "Success Data ",
+#                 'message' : "Success Data ",
 #                 'data':serializer.data
 #             })
 #         return Response({
 #             'status':False,
-#             'msg' : "Fields Invalid Data ",
+#             'message' : "Fields Invalid Data ",
 #             'data':serializer.errors
 #         })
 #     except Exception as e:
 #         print(e)
 #     return Response({
 #         'status': False,
-#         'msg' : "Invalid ID",
+#         'message' : "Invalid ID",
 #         'data':{}
 #     })
 
 
-# Student API (GET, POST, PATCH, DELETE)
+# Student API (GET, POST, PUT, DELETE)
 class StudentAPI(APIView):
 
     def get(self,request):
-        student_objs = Student.objects.all()
+        
+        student_objs = Student.objects.filter(is_active=True).values() #active student
         serializer = StudentSerializer(student_objs, many = True)
 
         return Response({
             'status': True,
-            'msg': 'Students Data Fatched',
+            'message': 'Active Students Data Fatched',
             'data': serializer.data
         }) 
     
@@ -243,42 +246,42 @@ class StudentAPI(APIView):
             print(serializer.data)
             return Response({
                 'status':True,
-                'msg' : "Add Student Successful ",
+                'message' : "Add Student Successful ",
                 'data':serializer.data
             })
 
         print(data)
         return Response({
             'status':False,
-            'msg' : "Fields Invalid Data ",
+            'message' : "Fields Invalid Data ",
             'data':serializer.errors
         })
         
 
 
 
-    def patch(self,request):
+    def put(self,request):
         
         data = request.data 
-        print(data.get('student_id'))
-        if not data.get('student_id'):
+        print(data.get('id')) #url params
+        if not data.get('id'):
             return Response({
                 'status': False,
-                'msg':'ID is required',
+                'message':'ID is required',
                 'data' : {}
             })
-        obj = Student.objects.get(student_id = data.get('student_id'))
+        obj = Student.objects.get(id = data.get('id')) #id-logic
         serializer = Student(obj, data=data,partial=True)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save() 
             return Response({
                 'status':True,
-                    'msg' : "Data Update Success ",
-                    'data':serializer.data
-                })
+                'message' : "Data Update Success ",
+                'data':serializer.data
+            })
         return Response({
             'status':False,
-            'msg' : "Fields Invalid Data ",
+            'message' : "Fields Invalid Data ",
             'data':serializer.errors
         })
 
@@ -289,7 +292,7 @@ class StudentAPI(APIView):
         if not data.get('student_id'):
             return Response({
                 'status': False,
-                'msg':'ID is required',
+                'message':'ID is required',
                 'data' : {}
             })
         obj = Student.objects.get(student_id = data.get('student_id'))
@@ -298,12 +301,12 @@ class StudentAPI(APIView):
             serializer.delete()
             return Response({
                 'status':True,
-                'msg' : "Data Delete Successful ",
+                'message' : "Data Delete Successful ",
                 'data':serializer.data
             })
         return Response({
             'status':False,
-            'msg' : "Fields Invalid Data ",
+            'message' : "Fields Invalid Data ",
             'data':serializer.errors
         })
 
@@ -316,7 +319,7 @@ class ParentAPI(APIView):
 
         return Response({
             'status': True,
-            'msg': 'Parent Data Fatched',
+            'message': 'Parent Data Fatched',
             'data': serializer.data
         }) 
     def post(self,request):
@@ -328,27 +331,66 @@ class ParentAPI(APIView):
             print(serializer.data)
             return Response({
                 'status':True,
-                'msg' : "Add Parent Successful ",
+                'message' : "Add Parent Successful ",
                 'data':serializer.data
             })
 
         print(data)
         return Response({
             'status':False,
-            'msg' : "Fields Invalid Data ",
+            'message' : "Fields Invalid Data ",
             'data':serializer.errors
         })
+
+    def put(self,request):
+        
+        data = request.data 
+        print(data.get('id')) #url params
+        if not data.get('id'):
+            return Response({
+                'status': False,
+                'message':'ID is required',
+                'data' : {}
+            })
+        print(data.get('id'))
+
+        is_exist = Parent.objects.filter(id=data.get('id')).exists()
+
+        if is_exist:
+            obj = Parent.objects.get(id = data.get('id'))
+            serializer = ParentSerializer(obj,  data=data, partial=True)
+            if serializer.is_valid():
+                serializer.save() 
+                return Response({
+                    'status':True,
+                    'message' : "Data Update Success ",
+                    'data':serializer.data
+                })
+            return Response({
+                'status':False,
+                'message' : "Fields Invalid Data ",
+                'data':serializer.errors
+            })
+        else:
+            return Response({
+                'status':False,
+                'message':"This ID is not available"
+            })
     
 # Teacher API (GET, POST)
 class TeacherAPI(APIView):
     
     def get(self,request):
-        teacher_objs = Teacher.objects.all()
+        # print(request.query_params)
+        # print(request.query_params['id'])
+        id = request.query_params['id']
+        
+        teacher_objs = Teacher.objects.filter(is_active=True).values()
         serializer = TeacherSerializer(teacher_objs, many = True)
 
         return Response({
             'status': True,
-            'msg': 'Teacher Data Fatched',
+            'message': 'Teacher Data Fatched',
             'data': serializer.data
         }) 
     def post(self,request):
@@ -360,18 +402,53 @@ class TeacherAPI(APIView):
             print(serializer.data)
             return Response({
                 'status':True,
-                'msg' : "Add Teacher Successful ",
+                'message' : "Add Teacher Successful ",
                 'data':serializer.data
             })
 
         print(data)
         return Response({
             'status':False,
-            'msg' : "Fields Invalid Data ",
+            'message' : "Fields Invalid Data ",
             'data':serializer.errors
         })
 
-# Teacher API (GET, POST)
+    def put(self,request):
+        
+        data = request.data 
+        print(data.get('id')) #url params
+        if not data.get('id'):
+            return Response({
+                'status': False,
+                'message':'ID is required',
+                'data' : {}
+            })
+
+        is_exist = Teacher.objects.filter(id=data.get('id')).exists()
+  
+
+        if is_exist:
+            obj = Teacher.objects.get(id = data.get('id'))
+            serializer = TeacherSerializer(obj,  data=data, partial=True)
+            if serializer.is_valid():
+                serializer.save() 
+                return Response({
+                    'status':True,
+                    'message' : "Data Update Success ",
+                    'data':serializer.data
+                })
+            return Response({
+                'status':False,
+                'message' : "Fields Invalid Data ",
+                'data':serializer.errors
+            })
+        else:
+            return Response({
+                'status':False,
+                'message':"This ID is not available"
+            })
+
+# Classroom API (GET, POST)
 class ClassroomAPI(APIView):
     
     def get(self,request):
@@ -380,7 +457,7 @@ class ClassroomAPI(APIView):
 
         return Response({
             'status': True,
-            'msg': 'Classroom Data Fatched',
+            'message': 'Classroom Data Fatched',
             'data': serializer.data
         }) 
     def post(self,request):
@@ -392,16 +469,52 @@ class ClassroomAPI(APIView):
             print(serializer.data)
             return Response({
                 'status':True,
-                'msg' : "Add Classroom Successful ",
+                'message' : "Add Classroom Successful ",
                 'data':serializer.data
             })
 
         print(data)
         return Response({
             'status':False,
-            'msg' : "Fields Invalid Data ",
+            'message' : "Fields Invalid Data ",
             'data':serializer.errors
         })
+
+    def put(self,request):
+        
+        data = request.data 
+        print(data.get('id')) #url params
+        if not data.get('id'):
+            return Response({
+                'status': False,
+                'message':'ID is required',
+                'data' : {}
+            })
+        print(data.get('id'))
+  
+        is_exist = Classroom.objects.filter(id=data.get('id')).exists()
+        print(is_exist)
+    
+        if is_exist:
+            obj = Classroom.objects.get(id = data.get('id'))
+            serializer = ClassroomSerializer(obj,  data=data, partial=True)
+            if serializer.is_valid():
+                serializer.save() 
+                return Response({
+                    'status':True,
+                    'message' : "Data Update Success ",
+                    'data':serializer.data
+                })
+            return Response({
+                'status':False,
+                'message' : "Fields Invalid Data ",
+                'data':serializer.errors
+            })
+        else:
+            return Response({
+                'status':False,
+                'message':"This ID is not available"
+            })
 
 # Grade API (GET, POST)
 class GradeAPI(APIView):
@@ -412,7 +525,7 @@ class GradeAPI(APIView):
 
         return Response({
             'status': True,
-            'msg': 'Grade Data Fatched',
+            'message': 'Grade Data Fatched',
             'data': serializer.data
         }) 
     def post(self,request):
@@ -424,16 +537,54 @@ class GradeAPI(APIView):
             print(serializer.data)
             return Response({
                 'status':True,
-                'msg' : "Add Grade Successful ",
+                'message' : "Add Grade Successful ",
                 'data':serializer.data
             })
 
         print(data)
         return Response({
             'status':False,
-            'msg' : "Fields Invalid Data ",
+            'message' : "Fields Invalid Data ",
             'data':serializer.errors
         })
+
+    def put(self,request):
+        
+        data = request.data 
+        print(data.get('id')) #url params
+        if not data.get('id'):
+            return Response({
+                'status': False,
+                'message':'ID is required',
+                'data' : {}
+            })
+        print(data.get('id'))
+
+        is_exist = Grade.objects.filter(id=data.get('id')).exists()
+        print(is_exist)
+
+        if is_exist:
+            obj = Grade.objects.get(id = data.get('id'))
+            serializer = GradeSerializer(obj,  data=data, partial=True)
+            if serializer.is_valid():
+                serializer.save() 
+                return Response({
+                    'status':True,
+                    'message' : "Data Update Success ",
+                    'data':serializer.data
+                })
+            return Response({
+                'status':False,
+                'message' : "Fields Invalid Data ",
+                'data':serializer.errors
+            })
+        else:
+            return Response({
+                'status':False,
+                'message':"This ID is not available"
+            })
+            
+
 
 # Attendance API (GET, POST)
 class AttendanceAPI(APIView):
@@ -444,7 +595,7 @@ class AttendanceAPI(APIView):
 
         return Response({
             'status': True,
-            'msg': 'Attendance Data Fatched',
+            'message': 'Attendance Data Fatched',
             'data': serializer.data
         }) 
     def post(self,request):
@@ -456,16 +607,52 @@ class AttendanceAPI(APIView):
             print(serializer.data)
             return Response({
                 'status':True,
-                'msg' : "Add Attendance Successful ",
+                'message' : "Add Attendance Successful ",
                 'data':serializer.data
             })
 
         print(data)
         return Response({
             'status':False,
-            'msg' : "Fields Invalid Data ",
+            'message' : "Fields Invalid Data ",
             'data':serializer.errors
         })
+
+    def put(self,request):
+        
+        data = request.data 
+        print(data.get('id')) #url params
+        if not data.get('id'):
+            return Response({
+                'status': False,
+                'message':'ID is required',
+                'data' : {}
+            })
+        print(data.get('id'))
+
+        is_exist = Attendance.objects.filter(id=data.get('id')).exists()
+        print(is_exist)
+
+        if is_exist:
+            obj = Attendance.objects.get(id = data.get('id'))
+            serializer = AttendanceSerializer(obj,  data=data, partial=True)
+            if serializer.is_valid():
+                serializer.save() 
+                return Response({
+                    'status':True,
+                    'message' : "Data Update Success ",
+                    'data':serializer.data
+                })
+            return Response({
+                'status':False,
+                'message' : "Fields Invalid Data ",
+                'data':serializer.errors
+            })
+        else:
+            return Response({
+                'status':False,
+                'message':"This ID is not available"
+            })
 
 
 # ClassroomStudent API (GET, POST)
@@ -477,7 +664,7 @@ class ClassroomStudentAPI(APIView):
 
         return Response({
             'status': True,
-            'msg': 'ClassroomStudent Data Fatched',
+            'message': 'ClassroomStudent Data Fatched',
             'data': serializer.data
         }) 
     def post(self,request):
@@ -489,17 +676,52 @@ class ClassroomStudentAPI(APIView):
             print(serializer.data)
             return Response({
                 'status':True,
-                'msg' : "Add ClassroomStudent Successful ",
+                'message' : "Add ClassroomStudent Successful ",
                 'data':serializer.data
             })
 
         print(data)
         return Response({
             'status':False,
-            'msg' : "Fields Invalid Data ",
+            'message' : "Fields Invalid Data ",
             'data':serializer.errors
         })
 
+    def put(self,request):
+        
+        data = request.data 
+        print(data.get('id')) #url params
+        if not data.get('id'):
+            return Response({
+                'status': False,
+                'message':'ID is required',
+                'data' : {}
+            })
+        print(data.get('id'))
+
+        is_exist = ClassroomStudent.objects.filter(id=data.get('id')).exists()
+        print(is_exist)
+
+        if is_exist:
+            obj = ClassroomStudent.objects.get(id = data.get('id'))
+            serializer = ClassroomStudentSerializer(obj,  data=data, partial=True)
+            if serializer.is_valid():
+                serializer.save() 
+                return Response({
+                    'status':True,
+                    'message' : "Data Update Success ",
+                    'data':serializer.data
+                })
+            return Response({
+                'status':False,
+                'message' : "Fields Invalid Data ",
+                'data':serializer.errors
+            })
+        else:
+            return Response({
+                'status':False,
+                'message':"This ID is not available"
+            })
 
 # ExamType API (GET, POST)
 class ExamTypeAPI(APIView):
@@ -510,7 +732,7 @@ class ExamTypeAPI(APIView):
 
         return Response({
             'status': True,
-            'msg': 'ExamType Data Fatched',
+            'message': 'ExamType Data Fatched',
             'data': serializer.data
         }) 
     def post(self,request):
@@ -522,16 +744,52 @@ class ExamTypeAPI(APIView):
             print(serializer.data)
             return Response({
                 'status':True,
-                'msg' : "Add ExamType Successful ",
+                'message' : "Add ExamType Successful ",
                 'data':serializer.data
             })
 
         print(data)
         return Response({
             'status':False,
-            'msg' : "Fields Invalid Data ",
+            'message' : "Fields Invalid Data ",
             'data':serializer.errors
         })
+
+    def put(self,request):
+        
+        data = request.data 
+        print(data.get('id')) #url params
+        if not data.get('id'):
+            return Response({
+                'status': False,
+                'message':'ID is required',
+                'data' : {}
+            })
+        print(data.get('id'))
+
+        is_exist = ExamType.objects.filter(id=data.get('id')).exists()
+        print(is_exist)
+
+        if is_exist:
+            obj = ExamType.objects.get(id = data.get('id'))
+            serializer = ExamTypeSerializer(obj,  data=data, partial=True)
+            if serializer.is_valid():
+                serializer.save() 
+                return Response({
+                    'status':True,
+                    'message' : "Data Update Success ",
+                    'data':serializer.data
+                })
+            return Response({
+                'status':False,
+                'message' : "Fields Invalid Data ",
+                'data':serializer.errors
+            })
+        else:
+            return Response({
+                'status':False,
+                'message':"This ID is not available"
+            })
 
 # Course API (GET, POST)
 class CourseAPI(APIView):
@@ -542,7 +800,7 @@ class CourseAPI(APIView):
 
         return Response({
             'status': True,
-            'msg': 'Course Data Fatched',
+            'message': 'Course Data Fatched',
             'data': serializer.data
         }) 
     def post(self,request):
@@ -554,16 +812,52 @@ class CourseAPI(APIView):
             print(serializer.data)
             return Response({
                 'status':True,
-                'msg' : "Add Course Successful ",
+                'message' : "Add Course Successful ",
                 'data':serializer.data
             })
 
         print(data)
         return Response({
             'status':False,
-            'msg' : "Fields Invalid Data ",
+            'message' : "Fields Invalid Data ",
             'data':serializer.errors
         })
+
+    def put(self,request):
+        
+        data = request.data 
+        print(data.get('id')) #url params
+        if not data.get('id'):
+            return Response({
+                'status': False,
+                'message':'ID is required',
+                'data' : {}
+            })
+        print(data.get('id'))
+
+        is_exist = Course.objects.filter(id=data.get('id')).exists()
+        print(is_exist)
+
+        if is_exist:
+            obj = Course.objects.get(id = data.get('id'))
+            serializer = CourseSerializer(obj,  data=data, partial=True)
+            if serializer.is_valid():
+                serializer.save() 
+                return Response({
+                    'status':True,
+                    'message' : "Data Update Success ",
+                    'data':serializer.data
+                })
+            return Response({
+                'status':False,
+                'message' : "Fields Invalid Data ",
+                'data':serializer.errors
+            })
+        else:
+            return Response({
+                'status':False,
+                'message':"This ID is not available"
+            })
 
 #  Exam API (GET, POST)
 class ExamAPI(APIView):
@@ -574,7 +868,7 @@ class ExamAPI(APIView):
 
         return Response({
             'status': True,
-            'msg': 'Exam Data Fatched',
+            'message': 'Exam Data Fatched',
             'data': serializer.data
         }) 
     def post(self,request):
@@ -586,16 +880,52 @@ class ExamAPI(APIView):
             print(serializer.data)
             return Response({
                 'status':True,
-                'msg' : "Add Exam Successful ",
+                'message' : "Add Exam Successful ",
                 'data':serializer.data
             })
 
         print(data)
         return Response({
             'status':False,
-            'msg' : "Fields Invalid Data ",
+            'message' : "Fields Invalid Data ",
             'data':serializer.errors
         })
+
+    def put(self,request):
+        
+        data = request.data 
+        print(data.get('id')) #url params
+        if not data.get('id'):
+            return Response({
+                'status': False,
+                'message':'ID is required',
+                'data' : {}
+            })
+        print(data.get('id'))
+
+        is_exist = Exam.objects.filter(id=data.get('id')).exists()
+        print(is_exist)
+
+        if is_exist:
+            obj = Exam.objects.get(id = data.get('id'))
+            serializer = ExamSerializer(obj,  data=data, partial=True)
+            if serializer.is_valid():
+                serializer.save() 
+                return Response({
+                    'status':True,
+                    'message' : "Data Update Success ",
+                    'data':serializer.data
+                })
+            return Response({
+                'status':False,
+                'message' : "Fields Invalid Data ",
+                'data':serializer.errors
+            })
+        else:
+            return Response({
+                'status':False,
+                'message':"This ID is not available"
+            })
 
 #  Subject API (GET, POST)
 class SubjectAPI(APIView):
@@ -606,7 +936,7 @@ class SubjectAPI(APIView):
 
         return Response({
             'status': True,
-            'msg': 'Subject Data Fatched',
+            'message': 'Subject Data Fatched',
             'data': serializer.data
         }) 
     def post(self,request):
@@ -618,16 +948,52 @@ class SubjectAPI(APIView):
             print(serializer.data)
             return Response({
                 'status':True,
-                'msg' : "Add Subject Successful ",
+                'message' : "Add Subject Successful ",
                 'data':serializer.data
             })
 
         print(data)
         return Response({
             'status':False,
-            'msg' : "Fields Invalid Data ",
+            'message' : "Fields Invalid Data ",
             'data':serializer.errors
         })
+
+    def put(self,request):
+        
+        data = request.data 
+        print(data.get('id')) #url params
+        if not data.get('id'):
+            return Response({
+                'status': False,
+                'message':'ID is required',
+                'data' : {}
+            })
+        print(data.get('id'))
+
+        is_exist = Subject.objects.filter(id=data.get('id')).exists()
+        print(is_exist)
+
+        if is_exist:
+            obj = Subject.objects.get(id = data.get('id'))
+            serializer = SubjectSerializer(obj,  data=data, partial=True)
+            if serializer.is_valid():
+                serializer.save() 
+                return Response({
+                    'status':True,
+                    'message' : "Data Update Success ",
+                    'data':serializer.data
+                })
+            return Response({
+                'status':False,
+                'message' : "Fields Invalid Data ",
+                'data':serializer.errors
+            })
+        else:
+            return Response({
+                'status':False,
+                'message':"This ID is not available"
+            })
 
 
 #  ExamResult API (GET, POST)
@@ -639,7 +1005,7 @@ class ExamResultAPI(APIView):
 
         return Response({
             'status': True,
-            'msg': 'ExamResult Data Fatched',
+            'message': 'ExamResult Data Fatched',
             'data': serializer.data
         }) 
     def post(self,request):
@@ -651,16 +1017,51 @@ class ExamResultAPI(APIView):
             print(serializer.data)
             return Response({
                 'status':True,
-                'msg' : "Add ExamResult Successful ",
+                'message' : "Add ExamResult Successful ",
                 'data':serializer.data
             })
 
         print(data)
         return Response({
             'status':False,
-            'msg' : "Fields Invalid Data ",
+            'message' : "Fields Invalid Data ",
             'data':serializer.errors
         })
+    def put(self,request):
+        
+        data = request.data 
+        print(data.get('id')) #url params
+        if not data.get('id'):
+            return Response({
+                'status': False,
+                'message':'ID is required',
+                'data' : {}
+            })
+        print(data.get('id'))
+
+        is_exist = ExamResult.objects.filter(id=data.get('id')).exists()
+        print(is_exist)
+
+        if is_exist:
+            obj = ExamResult.objects.get(id = data.get('id'))
+            serializer = ExamResultSerializer(obj,  data=data, partial=True)
+            if serializer.is_valid():
+                serializer.save() 
+                return Response({
+                    'status':True,
+                    'message' : "Data Update Success ",
+                    'data':serializer.data
+                })
+            return Response({
+                'status':False,
+                'message' : "Fields Invalid Data ",
+                'data':serializer.errors
+            })
+        else:
+            return Response({
+                'status':False,
+                'message':"This ID is not available"
+            })
 
 #  AdminSection API (GET)
 class AdminSectionAPI(APIView):
@@ -671,6 +1072,7 @@ class AdminSectionAPI(APIView):
 
         return Response({
             'status': True,
-            'msg': 'AdminSection Data Fatched',
+            'message': 'AdminSection Data Fatched',
             'data': serializer.data
-        }) 
+        })
+         
