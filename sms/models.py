@@ -1,4 +1,9 @@
 
+from ast import Sub
+from copyreg import constructor
+from pyexpat import model
+from unicodedata import name
+from dbus import MissingErrorHandlerException
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -6,95 +11,130 @@ from django.utils import timezone
 # Create your models here.
 
 class Parent(models.Model):
-    # parent_id = models.IntegerField(primary_key=True)
-    parent_email = models.EmailField()
-    parent_password = models.CharField(max_length=20)
-    parent_fname = models.CharField(max_length=20)
-    parent_lname = models.CharField(max_length=20)
-    parent_date_of_birth = models.DateField()
-    parent_mobile_no = models.IntegerField()
-    parent_status = models.BooleanField(default=False)
+    email = models.EmailField()
+    # password = models.CharField(max_length=20)
+    fname = models.CharField(max_length=20)
+    lname = models.CharField(max_length=20)
+    dob = models.DateField()
+    mobile_no = models.IntegerField()
+    is_active = models.BooleanField(default=False)
 
 
 class Teacher(models.Model):
-    # teacher_id = models.IntegerField(primary_key=True)
-    teacher_email = models.EmailField()
-    teacher_password = models.CharField(max_length=20)
-    teacher_fname = models.CharField(max_length=20)
-    teacher_lname = models.CharField(max_length=20)
-    teacher_date_of_birth = models.DateField()
-    teacher_mobile_no = models.IntegerField()
-    teacher_status = models.BooleanField(default=False)
+    email = models.EmailField()
+    # password = models.CharField(max_length=20)
+    fname = models.CharField(max_length=20)
+    lname = models.CharField(max_length=20)
+    dob = models.DateField()
+    mobile_no = models.IntegerField()
+    is_active = models.BooleanField(default=False)
 
 class Classroom(models.Model):
-    # classroom_id = models.IntegerField(primary_key=True)
-    classroom_year = models.CharField(max_length=20)
-    classroom_section = models.CharField(max_length=20)
-    classroom_status = models.BooleanField()
-    classroom_remarks = models.TextField(max_length=100)
-    teacher_id = models.ForeignKey(Teacher, null=True, blank=True, on_delete=models.CASCADE)  #Foreign Key
+    # year = models.CharField(max_length=20)
+    section = models.CharField(max_length=20)
+    is_active = models.BooleanField(default=False)
+    remarks = models.TextField(max_length=100)
+    teacher = models.ForeignKey(Teacher, null=True, blank=True, on_delete=models.CASCADE)  #Foreign Key
 
 
 
 class Grade(models.Model):
-    grade_id = models.IntegerField(primary_key=True)
-    grade_name = models.CharField(max_length=10)
-
-class Cource(models.Model):
-    # cource_id = models.IntegerField(primary_key=True)
-    cource_name = models.CharField(max_length=20)
-    cource_description = models.TextField()
-
-class Student(models.Model):
-    # student_id = models.IntegerField(primary_key=True)
-    student_email = models.EmailField(max_length=254)
-    student_password = models.CharField(max_length=20)
-    student_fname = models.CharField(max_length=10)
-    student_lname = models.CharField(max_length=10)
-    student_date_of_birth = models.DateField()
-    student_mobile_no = models.IntegerField()
-    parent_id = models.ForeignKey(Parent, null=True, blank=True, on_delete=models.CASCADE)  #Foreign Key
-    student_date_of_join = models.DateField() #joining date
-    student_status = models.BooleanField(default=False) #is_active
+    grade = models.CharField(max_length=10)
 
 
+class ExamType(models.Model):
+    name = models.CharField(max_length=15)
+    description = models.TextField()
 
-class Attendance(models.Model):
-    attendance_date = models.DateField()
-    student_id = models.ForeignKey(Student, null=True, blank=True, on_delete=models.CASCADE)  #Foreign Key
-    attendance_status = models.BooleanField(default=False)
-    attendance_remarks = models.TextField()
+class Choice(models.Model):
+    CHOICE = ''
+    if name == 'Degree Engineering' or name == 'Diploma Engineering':
+        CHOICE = (
+            ('Computer','Computer'),
+            ('It','It'),
+            ('Mechanical','Mechanical'),
+            ('Civil','Civil'),
+            ('Electrical','Electrical')
+        )
+    elif name == 'B.Sc.':
+        CHOICE = (
+            ('Physics','Physics'),
+            ('Chemistray','Chemistray'),
+            ('Biology','Biology'),
+            ('Maths','Maths'),
+            ('Microbiology','Microbiology')
+        )
 
-class Classroom_Student(models.Model):
-    # classroom_student_id = models.IntegerField(primary_key=True, default=True)
-    classroom_id = models.ForeignKey(Classroom, null=True, blank=True, on_delete=models.CASCADE) #Foreign Key
-    student_id = models.ForeignKey(Student, null=True, blank=True, on_delete=models.CASCADE) #Foreign Key
+
+    subcource = models.CharField(max_length=20, choices=CHOICE,primary_key=True)
+
+    
+class Course(Choice,models.Model):
+    COURSE_CHOICE = (
+        ('Degree Engineering','Degree Engineering'),
+        ('Diploma Engineering','Diploma Engineering'),
+        ('B.Sc.','B.Sc.'),
+        ('B.Pharm','B.Pharm'),
+        ('MCA','MCA')
+    )
+
+    name = models.CharField(max_length=20, choices=COURSE_CHOICE)
+    description = models.TextField()
+    fees = models.IntegerField()
 
 
-class Exam_Type(models.Model):
-    # exam_type_id = models.IntegerField(primary_key=True)
-    exam_type_name = models.CharField(max_length=15)
-    exam_type_description = models.TextField()
+
 
 class Exam(models.Model):
-    # exam_id = modedls.IntegerField(primary_key=True)
-    exam_type_id = models.ForeignKey(Exam_Type, null=True, blank=True, on_delete=models.CASCADE) #Foreign Key
+    type = models.ForeignKey(ExamType, null=True, blank=True, on_delete=models.CASCADE) #Foreign Key
+    title = models.CharField(max_length=50)
+    course = models.ForeignKey(Course, null=True, blank=True, on_delete=models.CASCADE)
 
-class Exam_Result(models.Model):
-    exam_id = models.ForeignKey(Exam, null=True, blank=True, on_delete=models.CASCADE) #Foreign Key
-    student_id = models.ForeignKey(Student, null=True, blank=True, on_delete=models.CASCADE) #Foreign Key
-    cource_id = models.ForeignKey(Cource, null=True, blank=True, on_delete=models.CASCADE) #Foreign Key
-    exam_result_marks = models.IntegerField()
-    exam_result_status = models.BooleanField()
+class Subject(models.Model):
+    
+    name = models.CharField(max_length=100)
+    code = models.IntegerField()
+    course = models.ForeignKey(Course,null=True, blank=True, on_delete=models.CASCADE)
 
-class Department(models.Model):
-    # department_id = models.IntegerField(primary_key=True)
-    DEPARTMENT_CHOICE = (
-        ('Computer','Computer'),
-        ('It','It'),
-        ('Mechanical','Mechanical'),
-        ('Civil','Civil'),
-        ('Electrical','Electrical')
-    )
-    department_name = models.CharField(max_length=20, choices=DEPARTMENT_CHOICE)
 
+class Student(models.Model):
+    
+    enrollment = models.CharField(max_length=50,primary_key=True)
+    email = models.EmailField(max_length=254)
+    password = models.CharField(max_length=20)
+    fname = models.CharField(max_length=10)
+    lname = models.CharField(max_length=10)
+    dob = models.DateField()
+    student_mobile_no = models.IntegerField()
+    parent = models.ForeignKey(Parent, null=True, blank=True, on_delete=models.CASCADE)  #Foreign Key
+    joining_date = models.DateField() #joining date
+    course = models.ForeignKey(Course, on_delete = models.CASCADE)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=False) #is_active
+    # subject, cource
+
+class Attendance(models.Model):
+    date = models.DateField()
+    student = models.ForeignKey(Student, null=True, blank=True, on_delete=models.CASCADE)  #Foreign Key
+    is_active = models.BooleanField(default=False)
+    remarks = models.TextField()
+
+class ClassroomStudent(models.Model):
+    classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE) #Foreign Key
+    student = models.ForeignKey(Student,  on_delete=models.CASCADE) #Foreign Key
+
+
+class ExamResult(models.Model):
+    exam = models.ForeignKey(Exam, null=True, blank=True, on_delete=models.CASCADE) #Foreign Key
+    student = models.ForeignKey(Student, null=True, blank=True, on_delete=models.CASCADE) #Foreign Key
+    Course = models.ForeignKey(Course, null=True, blank=True, on_delete=models.CASCADE) #Foreign Key
+    subject = models.ForeignKey(Subject, null=True, blank=True, on_delete=models.CASCADE)
+    marks = models.IntegerField()
+    is_pass = models.BooleanField()
+
+
+class AdminSection(models.Model):
+    student = models.ForeignKey(Student, null=True, blank=True, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course,null=True, blank=True, on_delete=models.CASCADE)
+    teacher = models.ForeignKey(Teacher,null=True, blank=True, on_delete=models.CASCADE)
+    remarks = models.CharField(max_length=100, null=True, blank=True)
