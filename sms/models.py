@@ -7,6 +7,7 @@ from dbus import MissingErrorHandlerException
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from sms import constant
 
 # Create your models here.
 
@@ -20,6 +21,7 @@ class Parent(models.Model):
     is_active = models.BooleanField(default=False)
 
 
+
 class Teacher(models.Model):
     email = models.EmailField()
     # password = models.CharField(max_length=20)
@@ -28,6 +30,7 @@ class Teacher(models.Model):
     dob = models.DateField()
     mobile_no = models.IntegerField()
     is_active = models.BooleanField(default=False)
+
 
 class Classroom(models.Model):
     # year = models.CharField(max_length=20)
@@ -42,45 +45,32 @@ class Grade(models.Model):
     grade = models.CharField(max_length=10)
 
 
+
 class ExamType(models.Model):
     name = models.CharField(max_length=15)
     description = models.TextField()
 
+
 class Choice(models.Model):
-    CHOICE = ''
     if name == 'Degree Engineering' or name == 'Diploma Engineering':
-        CHOICE = (
-            ('Computer','Computer'),
-            ('It','It'),
-            ('Mechanical','Mechanical'),
-            ('Civil','Civil'),
-            ('Electrical','Electrical')
-        )
+        sub_cource = models.CharField(max_length=20, choices=constant.CHOICE_1)      
     elif name == 'B.Sc.':
-        CHOICE = (
-            ('Physics','Physics'),
-            ('Chemistray','Chemistray'),
-            ('Biology','Biology'),
-            ('Maths','Maths'),
-            ('Microbiology','Microbiology')
-        )
+        sub_cource = models.CharField(max_length=20, choices=constant.CHOICE_1)
+    else:
+        sub_cource = models.CharField(max_length=20, choices='')
+        
 
 
-    subcource = models.CharField(max_length=20, choices=CHOICE,primary_key=True)
+    
 
     
 class Course(Choice,models.Model):
-    COURSE_CHOICE = (
-        ('Degree Engineering','Degree Engineering'),
-        ('Diploma Engineering','Diploma Engineering'),
-        ('B.Sc.','B.Sc.'),
-        ('B.Pharm','B.Pharm'),
-        ('MCA','MCA')
-    )
 
-    name = models.CharField(max_length=20, choices=COURSE_CHOICE)
+    name = models.CharField(max_length=20, choices=constant.COURSE_CHOICE)
     description = models.TextField()
     fees = models.IntegerField()
+
+
 
 
 
@@ -105,7 +95,7 @@ class Student(models.Model):
     fname = models.CharField(max_length=10)
     lname = models.CharField(max_length=10)
     dob = models.DateField()
-    student_mobile_no = models.IntegerField()
+    mobile_no = models.IntegerField()
     parent = models.ForeignKey(Parent, null=True, blank=True, on_delete=models.CASCADE)  #Foreign Key
     joining_date = models.DateField() #joining date
     course = models.ForeignKey(Course, on_delete = models.CASCADE)
