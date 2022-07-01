@@ -15,6 +15,9 @@ admin.site.register(sms_model.Grade)
 admin.site.register(sms_model.Parent)
 admin.site.register(sms_model.Student)
 admin.site.register(sms_model.Teacher)
+admin.site.register(sms_model.AdminSection)
+admin.site.register(sms_model.Subject)
+admin.site.register(sms_model.Choice)
 
 # @admin.register(Classroom)
 # class ClassroomAdmin(admin.ModelAdmin):

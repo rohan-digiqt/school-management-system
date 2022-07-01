@@ -13,3 +13,11 @@ CHOICE_2 = (
     ('Maths','Maths'),
     ('Microbiology','Microbiology')
 )
+
+COURSE_CHOICE = (
+        ('Degree Engineering','Degree Engineering'),
+        ('Diploma Engineering','Diploma Engineering'),
+        ('B.Sc.','B.Sc.'),
+        ('B.Pharm','B.Pharm'),
+        ('MCA','MCA')
+    )
